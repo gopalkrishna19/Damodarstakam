@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yashoda Damodar: Nandagaon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen active">
+            <h1 class="title">Damodarastakam</h1>
+            <div class="menu-content">
+                <img src="assets/YashodhaDamodar.jpeg" alt="Yashoda and Krishna" class="menu-image">
+                <div class="description">
+                    <h2>Overview</h2>
+                    <p>A divine chase in Nandagaon. Player 1 is Mother Yashoda, Player 2 is Krishna.</p>
+                    <h2>How to Play</h2>
+                    <ul>
+                        <li>Yashoda moves first.</li>
+                        <li>Players take turns moving to adjacent nodes.</li>
+                        <li>Yashoda wins if she catches Krishna (lands on the same node).</li>
+                        <li>Krishna wins if he evades capture for the duration of the game.</li>
+                    </ul>
+                </div>
+                <div class="menu-buttons">
+                    <button id="btn-easy" class="btn primary">Easy (2P)</button>
+                    <button id="btn-hard" class="btn secondary">Hard (2P)</button>
+                    <button id="btn-easy-ai" class="btn primary"
+                        style="background: linear-gradient(135deg, #ff9966, #ff5e62);">Easy (AI)</button>
+                    <button id="btn-hard-ai" class="btn secondary"
+                        style="background: linear-gradient(135deg, #4facfe, #00f2fe);">Hard (AI)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div class="header">
+                <div class="turn-info">
+                    <span id="turn-count">Turn: 1 / 3000</span>
+                </div>
+                <div class="player-info">
+                    <span id="current-player">Current Turn: Yashoda</span>
+                </div>
+            </div>
+
+            <div id="game-container">
+                <canvas id="game-canvas"></canvas>
+            </div>
+
+            <div class="game-controls">
+                <button id="btn-restart" class="btn small">Restart</button>
+                <button id="btn-menu" class="btn small">Menu</button>
+            </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="game-over-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="winner-text">Yashoda Wins!</h2>
+                <button id="btn-play-again" class="btn primary">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="assets/Damodarastakam.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
