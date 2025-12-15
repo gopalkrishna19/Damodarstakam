@@ -75,6 +75,7 @@ body {
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     background: linear-gradient(to right, #fff, #ccc);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -154,6 +155,27 @@ body {
     color: white;
 }
 
+/* Specific Button Styles */
+.btn-easy {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: #1a1a1a;
+}
+
+.btn-hard {
+    background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+    color: white;
+}
+
+.btn-easy-ai {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.btn-hard-ai {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
 .header {
     width: 100%;
     padding: 1rem 2rem;
@@ -180,6 +202,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    /* Ensure absolute children are relative to this */
 }
 
 canvas {
@@ -238,4 +262,129 @@ canvas {
     font-size: 2.5rem;
     margin-bottom: 2rem;
     color: var(--accent-color);
+    padding: 1rem;
+    background: radial-gradient(circle at center, #2a3045 0%, var(--bg-color) 100%);
+    border-radius: 10px;
+}
+
+/* Monkey GIF */
+.monkey-gif {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    max-width: 300px;
+    width: 25vw;
+    height: auto;
+    z-index: 20;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+}
+
+/* ========================================
+   RESPONSIVE DESIGN - Mobile Support
+   ======================================== */
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .menu-content {
+        padding: 1rem;
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+
+    .menu-image {
+        max-height: 20vh;
+    }
+
+    .description {
+        font-size: 0.85rem;
+    }
+
+    .description h2 {
+        font-size: 1rem;
+    }
+
+    .menu-buttons {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .header {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .turn-info,
+    .player-info {
+        font-size: 1rem;
+    }
+
+    .game-controls {
+        top: auto;
+        bottom: 20px;
+        right: 10px;
+        flex-direction: row;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    #winner-text {
+        font-size: 1.8rem;
+    }
+
+    .monkey-gif {
+        width: 30vw;
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .menu-image {
+        max-height: 15vh;
+    }
+
+    .description {
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Touch-friendly enhancements */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        padding: 1rem 2rem;
+        min-height: 48px;
+    }
+
+    .btn:hover {
+        transform: none;
+        filter: none;
+    }
+
+    .btn:active {
+        transform: scale(0.98);
+        filter: brightness(0.9);
+    }
 }
