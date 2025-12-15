@@ -4,7 +4,7 @@ const CONFIG = {
     NODE_RADIUS: 32,
     ANIMATION_DURATION: 350,
     AI_DELAY: 500,
-    MONKEY_INTERVAL: 3, // Show monkey every N moves
+    MONKEY_INTERVAL: 6, // Show monkey every N moves
     COLORS: {
         // Premium dark theme
         BACKGROUND: '#0f0f1a',
