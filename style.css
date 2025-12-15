@@ -1,15 +1,36 @@
 :root {
-    --bg-color: #1e2232;
-    --text-color: #ffffff;
-    --primary-color: #dc3246;
-    /* Yashoda Red */
-    --secondary-color: #285ac8;
-    /* Krishna Blue */
-    --accent-color: #ffeb3b;
-    /* Highlight */
-    --node-color: #5a6478;
-    --node-border: #b4b4c8;
-    --edge-color: #788296;
+    /* Premium Color Palette - Divine Theme */
+    --bg-primary: #0f0f1a;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #16213e;
+
+    /* Yashoda - Warm Divine Glow */
+    --yashoda-primary: #ff6b35;
+    --yashoda-secondary: #f7931e;
+    --yashoda-glow: rgba(255, 107, 53, 0.3);
+    --yashoda-bg: linear-gradient(135deg, #2d1810 0%, #1a0f0a 100%);
+
+    /* Krishna - Celestial Blue */
+    --krishna-primary: #4fc3f7;
+    --krishna-secondary: #29b6f6;
+    --krishna-glow: rgba(79, 195, 247, 0.3);
+    --krishna-bg: linear-gradient(135deg, #0d2137 0%, #0a1628 100%);
+
+    /* Accent Colors */
+    --gold-accent: #ffd700;
+    --gold-glow: rgba(255, 215, 0, 0.4);
+    --divine-purple: #9c27b0;
+    --sacred-green: #00c853;
+
+    /* Node Colors */
+    --node-fill: linear-gradient(145deg, #2a2a4a, #1e1e36);
+    --node-border: #4a4a6a;
+    --node-highlight: #ffd700;
+
+    /* Text */
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0c0;
+    --text-muted: #6a6a8a;
 
     --font-family: 'Outfit', sans-serif;
 }
@@ -22,19 +43,36 @@
 
 body {
     font-family: var(--font-family);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    height: 100vh;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#app {
+/* Animated background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(156, 39, 176, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(79, 195, 247, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#app {
+    width: 100%;
+    height: 100vh;
     position: relative;
+    z-index: 1;
 }
 
 .screen {
@@ -46,78 +84,135 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .hidden {
     opacity: 0;
     pointer-events: none;
     z-index: -1;
+    transform: scale(0.95);
 }
 
 .active {
     opacity: 1;
     pointer-events: auto;
     z-index: 1;
+    transform: scale(1);
 }
 
-/* Main Menu */
+/* ========================================
+   MAIN MENU
+   ======================================== */
 #main-menu {
     justify-content: center;
-    padding: 1rem;
-    background: radial-gradient(circle at center, #2a3045 0%, var(--bg-color) 100%);
+    padding: 1.5rem;
+    background:
+        radial-gradient(ellipse at center, rgba(42, 42, 74, 0.5) 0%, transparent 70%),
+        var(--bg-primary);
 }
 
 .title {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(to right, #fff, #ccc);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, #ffd700 0%, #ff6b35 50%, #4fc3f7 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.5));
+    }
 }
 
 .menu-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 800px;
+    max-width: 700px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1.5rem;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(145deg, rgba(42, 42, 74, 0.6), rgba(30, 30, 54, 0.8));
+    padding: 2rem;
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .menu-image {
     max-width: 100%;
-    max-height: 25vh;
+    max-height: 28vh;
     width: auto;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(255, 215, 0, 0.1);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.menu-image:hover {
+    transform: scale(1.02);
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.5),
+        0 0 50px rgba(255, 215, 0, 0.2);
 }
 
 .description {
     text-align: center;
-    margin-bottom: 1.5rem;
-    line-height: 1.4;
-    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    font-size: 1rem;
+    color: var(--text-secondary);
 }
 
 .description h2 {
-    font-size: 1.2rem;
-    margin-bottom: 0.3rem;
-    color: #ddd;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: var(--gold-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+.description p {
+    margin-bottom: 1rem;
+    font-style: italic;
 }
 
 .description ul {
     list-style: none;
-    margin-top: 0.3rem;
+    margin-top: 0.5rem;
+    text-align: left;
+    display: inline-block;
+}
+
+.description ul li {
+    padding: 0.3rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.description ul li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--gold-accent);
 }
 
 .menu-buttons {
@@ -125,75 +220,139 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     width: 100%;
-    max-width: 500px;
+    max-width: 450px;
 }
 
-/* Buttons */
+/* ========================================
+   BUTTONS - Premium Design
+   ======================================== */
 .btn {
-    padding: 0.8rem 2rem;
+    padding: 1rem 2rem;
     font-size: 1.1rem;
     font-weight: 600;
     border: none;
-    border-radius: 50px;
+    border-radius: 16px;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: var(--font-family);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    filter: brightness(1.1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .btn:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
 }
 
-.btn.primary {
-    background: linear-gradient(135deg, var(--primary-color), #ff6b6b);
+/* Easy Mode - Yashoda Orange/Gold */
+.btn.primary,
+#btn-easy {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
     color: white;
+    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
 }
 
-/* Specific Button Styles */
-.btn-easy {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    color: #1a1a1a;
+#btn-easy:hover {
+    box-shadow: 0 8px 30px rgba(255, 107, 53, 0.6);
 }
 
-.btn-hard {
-    background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+/* Hard Mode - Deep Purple */
+.btn.secondary,
+#btn-hard {
+    background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
     color: white;
+    box-shadow: 0 4px 20px rgba(156, 39, 176, 0.4);
 }
 
-.btn-easy-ai {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+#btn-hard:hover {
+    box-shadow: 0 8px 30px rgba(156, 39, 176, 0.6);
+}
+
+/* Easy AI - Krishna Blue */
+#btn-easy-ai {
+    background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+    color: #0a1628;
+    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4);
+}
+
+#btn-easy-ai:hover {
+    box-shadow: 0 8px 30px rgba(79, 195, 247, 0.6);
+}
+
+/* Hard AI - Sacred Green */
+#btn-hard-ai {
+    background: linear-gradient(135deg, #00c853 0%, #00a844 100%);
     color: white;
+    box-shadow: 0 4px 20px rgba(0, 200, 83, 0.4);
 }
 
-.btn-hard-ai {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+#btn-hard-ai:hover {
+    box-shadow: 0 8px 30px rgba(0, 200, 83, 0.6);
 }
 
+/* Small buttons */
+.btn.small {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.btn.small:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    border-color: var(--gold-accent);
+}
+
+/* ========================================
+   GAME SCREEN
+   ======================================== */
 .header {
     width: 100%;
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+    backdrop-filter: blur(10px);
     position: absolute;
     top: 0;
     left: 0;
     z-index: 10;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
 }
 
 .turn-info,
 .player-info {
     font-size: 1.2rem;
     font-weight: 600;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.turn-info {
+    color: var(--gold-accent);
 }
 
 #game-container {
@@ -203,12 +362,15 @@ body {
     justify-content: center;
     align-items: center;
     position: relative;
-    /* Ensure absolute children are relative to this */
+    background: var(--bg-primary);
 }
 
 canvas {
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+    box-shadow:
+        0 0 100px rgba(0, 0, 0, 0.5),
+        inset 0 0 50px rgba(255, 215, 0, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.1);
 }
 
 .game-controls {
@@ -217,95 +379,131 @@ canvas {
     right: 20px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
-/* Modal */
+/* ========================================
+   MODAL - Game Over
+   ======================================== */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.85);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 100;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     transition: opacity 0.3s;
 }
 
 .modal-content {
-    background: #2a3045;
-    padding: 3rem;
-    border-radius: 20px;
+    background: linear-gradient(145deg, #2a2a4a, #1a1a2e);
+    padding: 3rem 4rem;
+    border-radius: 24px;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 60px rgba(255, 215, 0, 0.1);
+    animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes popIn {
+@keyframes modalPop {
     from {
-        transform: scale(0.8);
+        transform: scale(0.7) translateY(50px);
         opacity: 0;
     }
 
     to {
-        transform: scale(1);
+        transform: scale(1) translateY(0);
         opacity: 1;
     }
 }
 
 #winner-text {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     margin-bottom: 2rem;
-    color: var(--accent-color);
-    padding: 1rem;
-    background: radial-gradient(circle at center, #2a3045 0%, var(--bg-color) 100%);
-    border-radius: 10px;
-}
-
-/* Monkey GIF */
-.monkey-gif {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    max-width: 300px;
-    width: 25vw;
-    height: auto;
-    z-index: 20;
-    pointer-events: none;
-    transition: opacity 0.5s ease;
-    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    text-shadow: 0 0 30px currentColor;
 }
 
 /* ========================================
-   RESPONSIVE DESIGN - Mobile Support
+   MONKEY GIF
    ======================================== */
+#monkey-gif {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 180px;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+    z-index: 50;
+    pointer-events: none;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    border-radius: 12px;
+}
 
+#monkey-gif.hidden {
+    opacity: 0;
+    transform: translateX(-50px) scale(0.8);
+}
+
+#monkey-gif.active {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    animation: monkeyBounce 0.5s ease;
+}
+
+@keyframes monkeyBounce {
+    0% {
+        transform: translateY(20px) scale(0.9);
+        opacity: 0;
+    }
+
+    50% {
+        transform: translateY(-10px) scale(1.05);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
 @media (max-width: 768px) {
     .title {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
 
     .menu-content {
-        padding: 1rem;
+        padding: 1.5rem;
         margin: 0.5rem;
         max-width: calc(100% - 1rem);
+        border-radius: 20px;
     }
 
     .menu-image {
-        max-height: 20vh;
+        max-height: 22vh;
     }
 
     .description {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 
     .description h2 {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 
     .menu-buttons {
@@ -314,14 +512,14 @@ canvas {
     }
 
     .btn {
-        padding: 0.7rem 1.5rem;
+        padding: 0.9rem 1.5rem;
         font-size: 1rem;
     }
 
     .header {
         padding: 0.75rem 1rem;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.5rem;
     }
 
     .turn-info,
@@ -337,54 +535,61 @@ canvas {
     }
 
     .modal-content {
-        padding: 1.5rem;
+        padding: 2rem;
         margin: 1rem;
     }
 
     #winner-text {
-        font-size: 1.8rem;
+        font-size: 2rem;
     }
 
-    .monkey-gif {
-        width: 30vw;
-        max-width: 150px;
+    #monkey-gif {
+        width: 120px;
+        bottom: 10px;
+        left: 10px;
     }
 }
 
 @media (max-width: 480px) {
     .title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
     }
 
     .menu-image {
-        max-height: 15vh;
+        max-height: 18vh;
     }
 
     .description {
-        font-size: 0.8rem;
-        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
     }
 
     .btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    #monkey-gif {
+        width: 100px;
     }
 }
 
-/* Touch-friendly enhancements */
+/* Touch-friendly */
 @media (hover: none) and (pointer: coarse) {
     .btn {
-        padding: 1rem 2rem;
-        min-height: 48px;
+        padding: 1.1rem 2rem;
+        min-height: 52px;
     }
 
     .btn:hover {
         transform: none;
-        filter: none;
     }
 
     .btn:active {
-        transform: scale(0.98);
-        filter: brightness(0.9);
+        transform: scale(0.97);
+    }
+
+    .btn::before {
+        display: none;
     }
 }

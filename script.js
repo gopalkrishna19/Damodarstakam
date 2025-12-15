@@ -1,21 +1,41 @@
 const CONFIG = {
     SCREEN_WIDTH: 1200,
     SCREEN_HEIGHT: 800,
-    NODE_RADIUS: 30,
-    ANIMATION_DURATION: 300, // ms for move animation
+    NODE_RADIUS: 32,
+    ANIMATION_DURATION: 350,
     AI_DELAY: 500,
+    MONKEY_INTERVAL: 3, // Show monkey every N moves
     COLORS: {
-        BACKGROUND: '#1e2232',
-        NODE: '#5a6478',
-        NODE_BORDER: '#b4b4c8',
-        EDGE: '#788296',
-        HIGHLIGHT: '#ffeb3b',
-        HIGHLIGHT_GLOW: 'rgba(255, 235, 59, 0.3)',
-        PATH_PREVIEW: 'rgba(255, 235, 59, 0.5)',
-        YASHODA_BG: '#ffdcdc',
-        KRISHNA_BG: '#dce6ff',
-        YASHODA_TEXT: '#b4283c',
-        KRISHNA_TEXT: '#1e3ca0',
+        // Premium dark theme
+        BACKGROUND: '#0f0f1a',
+
+        // Yashoda's turn - warm divine glow
+        YASHODA_BG: '#1a1210',
+        YASHODA_ACCENT: '#ff6b35',
+        YASHODA_TEXT: '#ff6b35',
+
+        // Krishna's turn - celestial blue
+        KRISHNA_BG: '#0a1420',
+        KRISHNA_ACCENT: '#4fc3f7',
+        KRISHNA_TEXT: '#4fc3f7',
+
+        // Node styling
+        NODE_FILL: '#1e1e36',
+        NODE_GRADIENT_TOP: '#2a2a4a',
+        NODE_GRADIENT_BOTTOM: '#1a1a2e',
+        NODE_BORDER: '#3a3a5a',
+        NODE_TEXT: '#b0b0c0',
+
+        // Highlight colors
+        HIGHLIGHT: '#ffd700',
+        HIGHLIGHT_GLOW: 'rgba(255, 215, 0, 0.4)',
+        PATH_PREVIEW: 'rgba(255, 215, 0, 0.6)',
+
+        // Edge styling
+        EDGE: '#2a2a4a',
+        EDGE_GLOW: 'rgba(255, 215, 0, 0.1)',
+
+        // General
         TURN_TEXT: '#ffffff'
     },
     PLAYER_YASHODA: 'Yashoda',
@@ -89,10 +109,13 @@ class Game {
 
         this.isAI = false;
 
+        // Move counter for monkey display
+        this.totalMoves = 0;
+
         // Animation state
         this.animation = {
             active: false,
-            player: null, // 'yashoda' or 'krishna'
+            player: null,
             fromPos: null,
             toPos: null,
             currentPos: null,
@@ -100,10 +123,8 @@ class Game {
             duration: CONFIG.ANIMATION_DURATION
         };
 
-        // Visual path preview - for hover state
+        // Visual path preview
         this.hoveredNode = null;
-
-        // Pulsing animation for valid moves
         this.pulsePhase = 0;
 
         this.assets = {
@@ -120,7 +141,6 @@ class Game {
     }
 
     init() {
-        // Load assets
         this.assets.yashoda.src = 'assets/Yashoda.jpg';
         this.assets.krishna.src = 'assets/Krishna.jpg';
 
@@ -133,21 +153,14 @@ class Game {
         this.assets.yashoda.onload = checkLoad;
         this.assets.krishna.onload = checkLoad;
 
-        // Error handling for assets
         this.assets.yashoda.onerror = () => console.error("Failed to load Yashoda image");
         this.assets.krishna.onerror = () => console.error("Failed to load Krishna image");
 
-        // Event Listeners
         window.addEventListener('resize', () => this.resize());
 
-        // Click event for desktop
         this.canvas.addEventListener('click', (e) => this.handleInteraction(e));
-
-        // Touch events for mobile
         this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
         this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
-
-        // Mouse move for hover effects (path preview)
         this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
         this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
 
@@ -164,7 +177,6 @@ class Game {
             this.resetGame();
         });
 
-        // Audio
         const music = document.getElementById('bg-music');
         music.volume = 0.5;
         const startAudio = () => {
@@ -173,16 +185,15 @@ class Game {
         document.body.addEventListener('click', startAudio, { once: true });
         document.body.addEventListener('touchstart', startAudio, { once: true });
 
-        // Start animation loop for pulsing effects
         this.startAnimationLoop();
     }
 
     startAnimationLoop() {
         const animate = () => {
-            this.pulsePhase += 0.05;
+            this.pulsePhase += 0.04;
             if (this.pulsePhase > Math.PI * 2) this.pulsePhase = 0;
 
-            if (this.currentConfig && !this.gameState.gameOver) {
+            if (this.currentConfig) {
                 this.draw();
             }
 
@@ -236,8 +247,10 @@ class Game {
             gameOver: false,
             winner: null
         };
+        this.totalMoves = 0;
         this.animation.active = false;
         this.hoveredNode = null;
+        this.hideMonkey();
         this.updateUI();
         this.draw();
     }
@@ -248,6 +261,7 @@ class Game {
         document.getElementById('main-menu').classList.remove('hidden');
         document.getElementById('main-menu').classList.add('active');
         document.getElementById('game-over-modal').classList.add('hidden');
+        this.hideMonkey();
     }
 
     getValidMoves(player) {
@@ -255,7 +269,6 @@ class Game {
         return this.currentConfig.GRAPH[currentPos] || [];
     }
 
-    // Convert screen coordinates to canvas coordinates
     getCanvasCoordinates(clientX, clientY) {
         const rect = this.canvas.getBoundingClientRect();
         const scaleX = this.canvas.width / rect.width;
@@ -267,7 +280,6 @@ class Game {
         };
     }
 
-    // Touch handling for mobile
     handleTouchStart(e) {
         e.preventDefault();
         if (e.touches.length === 1) {
@@ -283,7 +295,6 @@ class Game {
             const dx = Math.abs(touch.clientX - this.touchStartPos.x);
             const dy = Math.abs(touch.clientY - this.touchStartPos.y);
 
-            // Only register as tap if finger didn't move much
             if (dx < 30 && dy < 30) {
                 this.handleInteraction({
                     clientX: touch.clientX,
@@ -294,7 +305,6 @@ class Game {
         this.touchStartPos = null;
     }
 
-    // Mouse move for hover preview
     handleMouseMove(e) {
         if (this.gameState.gameOver || this.animation.active) return;
         if (this.isAI && this.gameState.currentPlayer === CONFIG.PLAYER_KRISHNA) return;
@@ -318,9 +328,7 @@ class Game {
 
     handleInteraction(e) {
         if (this.gameState.gameOver) return;
-        if (this.animation.active) return; // Don't allow moves during animation
-
-        // If it's AI turn, ignore clicks
+        if (this.animation.active) return;
         if (this.isAI && this.gameState.currentPlayer === CONFIG.PLAYER_KRISHNA) return;
 
         const coords = this.getCanvasCoordinates(e.clientX, e.clientY);
@@ -335,7 +343,6 @@ class Game {
     }
 
     getNodeAtPos(x, y) {
-        // Increase hit area for touch devices
         const hitRadius = CONFIG.NODE_RADIUS * 1.5;
 
         for (let [node, pos] of Object.entries(this.currentConfig.POSITIONS)) {
@@ -352,7 +359,6 @@ class Game {
         const isYashoda = this.gameState.currentPlayer === CONFIG.PLAYER_YASHODA;
         const currentPos = isYashoda ? this.gameState.yashodaPos : this.gameState.krishnaPos;
 
-        // Start animation
         const fromPos = this.currentConfig.POSITIONS[currentPos];
         const toPos = this.currentConfig.POSITIONS[targetNode];
 
@@ -367,7 +373,6 @@ class Game {
             targetNode: targetNode
         };
 
-        // Clear hover when moving
         this.hoveredNode = null;
     }
 
@@ -377,7 +382,7 @@ class Game {
         const elapsed = performance.now() - this.animation.startTime;
         const progress = Math.min(elapsed / this.animation.duration, 1);
 
-        // Easing function (ease-out cubic)
+        // Ease-out cubic
         const eased = 1 - Math.pow(1 - progress, 3);
 
         this.animation.currentPos = [
@@ -386,45 +391,53 @@ class Game {
         ];
 
         if (progress >= 1) {
-            // Animation complete
             this.completeMove(this.animation.targetNode);
             this.animation.active = false;
         }
     }
 
     completeMove(node) {
+        // Increment total moves
+        this.totalMoves++;
+
         if (this.gameState.currentPlayer === CONFIG.PLAYER_YASHODA) {
             this.gameState.yashodaPos = node;
             this.gameState.currentPlayer = CONFIG.PLAYER_KRISHNA;
-
-            // Hide Monkey GIF when Yashoda moves
-            const monkeyGif = document.getElementById('monkey-gif');
-            if (monkeyGif) {
-                monkeyGif.classList.add('hidden');
-                monkeyGif.classList.remove('active');
-            }
         } else {
             this.gameState.krishnaPos = node;
             this.gameState.turnCount++;
             this.gameState.currentPlayer = CONFIG.PLAYER_YASHODA;
+        }
 
-            // Show Monkey GIF after every 3rd turn of Krishna
-            if ((this.gameState.turnCount - 1) % 3 === 0) {
-                const monkeyGif = document.getElementById('monkey-gif');
-                if (monkeyGif) {
-                    monkeyGif.classList.remove('hidden');
-                    monkeyGif.classList.add('active');
-                }
-            }
+        // Show monkey every 3rd move (total moves by both players)
+        if (this.totalMoves % CONFIG.MONKEY_INTERVAL === 0) {
+            this.showMonkey();
+        } else {
+            this.hideMonkey();
         }
 
         this.checkGameOver();
         this.updateUI();
         this.draw();
 
-        // Trigger AI if needed
         if (!this.gameState.gameOver && this.isAI && this.gameState.currentPlayer === CONFIG.PLAYER_KRISHNA) {
             setTimeout(() => this.playAITurn(), CONFIG.AI_DELAY);
+        }
+    }
+
+    showMonkey() {
+        const monkeyGif = document.getElementById('monkey-gif');
+        if (monkeyGif) {
+            monkeyGif.classList.remove('hidden');
+            monkeyGif.classList.add('active');
+        }
+    }
+
+    hideMonkey() {
+        const monkeyGif = document.getElementById('monkey-gif');
+        if (monkeyGif) {
+            monkeyGif.classList.add('hidden');
+            monkeyGif.classList.remove('active');
         }
     }
 
@@ -432,22 +445,18 @@ class Game {
         if (this.gameState.gameOver) return;
 
         const validMoves = this.getValidMoves(CONFIG.PLAYER_KRISHNA);
-        // Filter out moves that land directly on Yashoda (immediate loss)
         const safeMoves = validMoves.filter(node => node !== this.gameState.yashodaPos);
 
         let move;
         if (safeMoves.length === 0) {
-            // No safe moves, just pick any valid move (will lose)
             move = validMoves[Math.floor(Math.random() * validMoves.length)];
         } else {
-            // Filter moves where Yashoda is NOT adjacent (i.e. not in Yashoda's neighbor list)
             const yashodaNeighbors = this.currentConfig.GRAPH[this.gameState.yashodaPos] || [];
             const bestMoves = safeMoves.filter(node => !yashodaNeighbors.includes(node));
 
             if (bestMoves.length > 0) {
                 move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
             } else {
-                // Only have moves where Yashoda is adjacent
                 move = safeMoves[Math.floor(Math.random() * safeMoves.length)];
             }
         }
@@ -465,6 +474,7 @@ class Game {
         }
 
         if (this.gameState.gameOver) {
+            this.hideMonkey();
             setTimeout(() => this.showGameOver(), CONFIG.AI_DELAY);
         }
     }
@@ -473,7 +483,9 @@ class Game {
         const modal = document.getElementById('game-over-modal');
         const text = document.getElementById('winner-text');
         text.textContent = `${this.gameState.winner} Wins!`;
-        text.style.color = this.gameState.winner === CONFIG.PLAYER_YASHODA ? CONFIG.COLORS.YASHODA_TEXT : CONFIG.COLORS.KRISHNA_TEXT;
+        text.style.color = this.gameState.winner === CONFIG.PLAYER_YASHODA
+            ? CONFIG.COLORS.YASHODA_ACCENT
+            : CONFIG.COLORS.KRISHNA_ACCENT;
         modal.classList.remove('hidden');
         modal.classList.add('active');
     }
@@ -481,40 +493,119 @@ class Game {
     updateUI() {
         document.getElementById('turn-count').textContent = `Turn: ${this.gameState.turnCount} / ${this.currentConfig.TURN_LIMIT}`;
         const playerSpan = document.getElementById('current-player');
-        playerSpan.textContent = `Current Turn: ${this.gameState.currentPlayer}`;
-        playerSpan.style.color = this.gameState.currentPlayer === CONFIG.PLAYER_YASHODA ? CONFIG.COLORS.YASHODA_TEXT : '#4facfe';
+        playerSpan.textContent = `Current: ${this.gameState.currentPlayer}`;
+        playerSpan.style.color = this.gameState.currentPlayer === CONFIG.PLAYER_YASHODA
+            ? CONFIG.COLORS.YASHODA_ACCENT
+            : CONFIG.COLORS.KRISHNA_ACCENT;
     }
 
     draw() {
-        // Set background based on player
-        let bgColor = CONFIG.COLORS.BACKGROUND;
-        if (!this.gameState.gameOver) {
-            bgColor = this.gameState.currentPlayer === CONFIG.PLAYER_YASHODA ? CONFIG.COLORS.YASHODA_BG : CONFIG.COLORS.KRISHNA_BG;
+        const isYashodaTurn = this.gameState.currentPlayer === CONFIG.PLAYER_YASHODA;
+
+        // Draw gradient background based on current player
+        const gradient = this.ctx.createRadialGradient(
+            this.canvas.width / 2, this.canvas.height / 2, 0,
+            this.canvas.width / 2, this.canvas.height / 2, this.canvas.width * 0.7
+        );
+
+        if (this.gameState.gameOver) {
+            gradient.addColorStop(0, '#1a1a2e');
+            gradient.addColorStop(1, CONFIG.COLORS.BACKGROUND);
+        } else if (isYashodaTurn) {
+            gradient.addColorStop(0, '#251815');
+            gradient.addColorStop(1, CONFIG.COLORS.YASHODA_BG);
+        } else {
+            gradient.addColorStop(0, '#0d1a28');
+            gradient.addColorStop(1, CONFIG.COLORS.KRISHNA_BG);
         }
 
-        this.ctx.fillStyle = bgColor;
+        this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw Edges
-        this.ctx.lineWidth = 3;
-        this.ctx.strokeStyle = CONFIG.COLORS.EDGE;
-        for (let [node, neighbors] of Object.entries(this.currentConfig.GRAPH)) {
-            const startPos = this.currentConfig.POSITIONS[node];
-            neighbors.forEach(neighbor => {
-                const endPos = this.currentConfig.POSITIONS[neighbor];
-                this.ctx.beginPath();
-                this.ctx.moveTo(startPos[0], startPos[1]);
-                this.ctx.lineTo(endPos[0], endPos[1]);
-                this.ctx.stroke();
-            });
-        }
+        // Draw subtle grid pattern
+        this.drawBackgroundPattern();
 
-        // Draw path preview (edge highlight) when hovering
+        // Draw edges with glow
+        this.drawEdges();
+
+        // Draw path preview
         if (this.hoveredNode && !this.animation.active) {
             this.drawPathPreview();
         }
 
-        // Draw Nodes
+        // Draw nodes
+        this.drawNodes();
+
+        // Draw players
+        if (this.animation.active) {
+            if (this.animation.player === 'yashoda') {
+                this.drawPlayerAtPos(this.animation.currentPos, this.assets.yashoda, CONFIG.COLORS.YASHODA_ACCENT);
+                this.drawPlayer(this.gameState.krishnaPos, this.assets.krishna, CONFIG.COLORS.KRISHNA_ACCENT);
+            } else {
+                this.drawPlayer(this.gameState.yashodaPos, this.assets.yashoda, CONFIG.COLORS.YASHODA_ACCENT);
+                this.drawPlayerAtPos(this.animation.currentPos, this.assets.krishna, CONFIG.COLORS.KRISHNA_ACCENT);
+            }
+        } else {
+            this.drawPlayer(this.gameState.yashodaPos, this.assets.yashoda, CONFIG.COLORS.YASHODA_ACCENT);
+            this.drawPlayer(this.gameState.krishnaPos, this.assets.krishna, CONFIG.COLORS.KRISHNA_ACCENT);
+        }
+    }
+
+    drawBackgroundPattern() {
+        this.ctx.save();
+        this.ctx.strokeStyle = 'rgba(255, 215, 0, 0.02)';
+        this.ctx.lineWidth = 1;
+
+        // Draw subtle radial lines from center
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
+
+        for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 12) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(centerX, centerY);
+            this.ctx.lineTo(
+                centerX + Math.cos(angle) * this.canvas.width,
+                centerY + Math.sin(angle) * this.canvas.height
+            );
+            this.ctx.stroke();
+        }
+
+        this.ctx.restore();
+    }
+
+    drawEdges() {
+        this.ctx.save();
+
+        for (let [node, neighbors] of Object.entries(this.currentConfig.GRAPH)) {
+            const startPos = this.currentConfig.POSITIONS[node];
+            neighbors.forEach(neighbor => {
+                if (parseInt(node) < neighbor) { // Only draw each edge once
+                    const endPos = this.currentConfig.POSITIONS[neighbor];
+
+                    // Draw glow
+                    this.ctx.strokeStyle = CONFIG.COLORS.EDGE_GLOW;
+                    this.ctx.lineWidth = 8;
+                    this.ctx.lineCap = 'round';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(startPos[0], startPos[1]);
+                    this.ctx.lineTo(endPos[0], endPos[1]);
+                    this.ctx.stroke();
+
+                    // Draw main edge
+                    this.ctx.strokeStyle = CONFIG.COLORS.EDGE;
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(startPos[0], startPos[1]);
+                    this.ctx.lineTo(endPos[0], endPos[1]);
+                    this.ctx.stroke();
+                }
+            });
+        }
+
+        this.ctx.restore();
+    }
+
+    drawNodes() {
         const validMoves = !this.gameState.gameOver ? this.getValidMoves(this.gameState.currentPlayer) : [];
 
         for (let [node, pos] of Object.entries(this.currentConfig.POSITIONS)) {
@@ -522,62 +613,54 @@ class Game {
             const isValidMove = validMoves.includes(nodeId);
             const isHovered = this.hoveredNode === nodeId;
 
-            // Draw glow effect for valid moves
+            // Draw glow for valid moves
             if (isValidMove && !this.gameState.gameOver) {
-                const pulseScale = 1 + Math.sin(this.pulsePhase) * 0.15;
-                const glowRadius = (CONFIG.NODE_RADIUS + 10) * pulseScale;
+                const pulseScale = 1 + Math.sin(this.pulsePhase) * 0.2;
+                const glowRadius = (CONFIG.NODE_RADIUS + 15) * pulseScale;
 
-                // Outer glow
                 const gradient = this.ctx.createRadialGradient(
                     pos[0], pos[1], CONFIG.NODE_RADIUS,
-                    pos[0], pos[1], glowRadius + 10
+                    pos[0], pos[1], glowRadius + 15
                 );
-                gradient.addColorStop(0, isHovered ? 'rgba(255, 235, 59, 0.6)' : 'rgba(255, 235, 59, 0.3)');
-                gradient.addColorStop(1, 'rgba(255, 235, 59, 0)');
+                gradient.addColorStop(0, isHovered ? 'rgba(255, 215, 0, 0.7)' : 'rgba(255, 215, 0, 0.4)');
+                gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
 
                 this.ctx.beginPath();
-                this.ctx.arc(pos[0], pos[1], glowRadius + 10, 0, Math.PI * 2);
+                this.ctx.arc(pos[0], pos[1], glowRadius + 15, 0, Math.PI * 2);
                 this.ctx.fillStyle = gradient;
                 this.ctx.fill();
             }
 
-            // Draw node
+            // Draw node gradient
+            const nodeGradient = this.ctx.createRadialGradient(
+                pos[0] - CONFIG.NODE_RADIUS / 3, pos[1] - CONFIG.NODE_RADIUS / 3, 0,
+                pos[0], pos[1], CONFIG.NODE_RADIUS
+            );
+
+            if (isHovered && isValidMove) {
+                nodeGradient.addColorStop(0, '#4a4a6a');
+                nodeGradient.addColorStop(1, '#3a3a5a');
+            } else {
+                nodeGradient.addColorStop(0, CONFIG.COLORS.NODE_GRADIENT_TOP);
+                nodeGradient.addColorStop(1, CONFIG.COLORS.NODE_GRADIENT_BOTTOM);
+            }
+
             this.ctx.beginPath();
             this.ctx.arc(pos[0], pos[1], CONFIG.NODE_RADIUS, 0, Math.PI * 2);
-
-            // Different fill for hovered valid move
-            if (isHovered && isValidMove) {
-                this.ctx.fillStyle = '#7a8498';
-            } else {
-                this.ctx.fillStyle = CONFIG.COLORS.NODE;
-            }
+            this.ctx.fillStyle = nodeGradient;
             this.ctx.fill();
 
+            // Draw border
             this.ctx.strokeStyle = isValidMove ? CONFIG.COLORS.HIGHLIGHT : CONFIG.COLORS.NODE_BORDER;
             this.ctx.lineWidth = isValidMove ? 3 : 2;
             this.ctx.stroke();
 
-            // Node ID
-            this.ctx.fillStyle = '#fff';
-            this.ctx.font = '16px Outfit';
+            // Draw node number
+            this.ctx.fillStyle = isValidMove ? CONFIG.COLORS.HIGHLIGHT : CONFIG.COLORS.NODE_TEXT;
+            this.ctx.font = `bold ${isValidMove ? '18' : '16'}px Outfit`;
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
             this.ctx.fillText(node, pos[0], pos[1]);
-        }
-
-        // Draw Players (considering animation)
-        if (this.animation.active) {
-            // Draw animation player at animated position
-            if (this.animation.player === 'yashoda') {
-                this.drawPlayerAtPos(this.animation.currentPos, this.assets.yashoda, CONFIG.COLORS.YASHODA_BG);
-                this.drawPlayer(this.gameState.krishnaPos, this.assets.krishna, CONFIG.COLORS.KRISHNA_BG);
-            } else {
-                this.drawPlayer(this.gameState.yashodaPos, this.assets.yashoda, CONFIG.COLORS.YASHODA_BG);
-                this.drawPlayerAtPos(this.animation.currentPos, this.assets.krishna, CONFIG.COLORS.KRISHNA_BG);
-            }
-        } else {
-            this.drawPlayer(this.gameState.yashodaPos, this.assets.yashoda, CONFIG.COLORS.YASHODA_BG);
-            this.drawPlayer(this.gameState.krishnaPos, this.assets.krishna, CONFIG.COLORS.KRISHNA_BG);
         }
     }
 
@@ -589,15 +672,14 @@ class Game {
         const fromPos = this.currentConfig.POSITIONS[currentPos];
         const toPos = this.currentConfig.POSITIONS[this.hoveredNode];
 
-        // Draw highlighted path
         this.ctx.save();
-        this.ctx.strokeStyle = CONFIG.COLORS.PATH_PREVIEW;
-        this.ctx.lineWidth = 8;
-        this.ctx.lineCap = 'round';
-        this.ctx.setLineDash([15, 10]);
 
-        // Animate dash offset
-        this.ctx.lineDashOffset = -this.pulsePhase * 10;
+        // Animated dashed line
+        this.ctx.strokeStyle = CONFIG.COLORS.PATH_PREVIEW;
+        this.ctx.lineWidth = 6;
+        this.ctx.lineCap = 'round';
+        this.ctx.setLineDash([12, 8]);
+        this.ctx.lineDashOffset = -this.pulsePhase * 15;
 
         this.ctx.beginPath();
         this.ctx.moveTo(fromPos[0], fromPos[1]);
@@ -606,20 +688,22 @@ class Game {
 
         this.ctx.restore();
 
-        // Draw arrow at the end
+        // Draw arrow
         this.drawArrow(fromPos, toPos);
     }
 
     drawArrow(from, to) {
-        const headLength = 15;
+        const headLength = 18;
         const angle = Math.atan2(to[1] - from[1], to[0] - from[0]);
 
-        // Position arrow at edge of target node
-        const arrowX = to[0] - Math.cos(angle) * CONFIG.NODE_RADIUS;
-        const arrowY = to[1] - Math.sin(angle) * CONFIG.NODE_RADIUS;
+        const arrowX = to[0] - Math.cos(angle) * (CONFIG.NODE_RADIUS + 5);
+        const arrowY = to[1] - Math.sin(angle) * (CONFIG.NODE_RADIUS + 5);
 
         this.ctx.save();
         this.ctx.fillStyle = CONFIG.COLORS.HIGHLIGHT;
+        this.ctx.shadowColor = CONFIG.COLORS.HIGHLIGHT;
+        this.ctx.shadowBlur = 10;
+
         this.ctx.beginPath();
         this.ctx.moveTo(arrowX, arrowY);
         this.ctx.lineTo(
@@ -635,14 +719,25 @@ class Game {
         this.ctx.restore();
     }
 
-    drawPlayer(nodeId, image, fallbackColor) {
+    drawPlayer(nodeId, image, accentColor) {
         const pos = this.currentConfig.POSITIONS[nodeId];
-        this.drawPlayerAtPos(pos, image, fallbackColor);
+        this.drawPlayerAtPos(pos, image, accentColor);
     }
 
-    drawPlayerAtPos(pos, image, fallbackColor) {
+    drawPlayerAtPos(pos, image, accentColor) {
         const size = CONFIG.NODE_RADIUS * 2;
 
+        // Outer glow
+        this.ctx.save();
+        this.ctx.shadowColor = accentColor;
+        this.ctx.shadowBlur = 20;
+        this.ctx.beginPath();
+        this.ctx.arc(pos[0], pos[1], CONFIG.NODE_RADIUS + 2, 0, Math.PI * 2);
+        this.ctx.fillStyle = 'transparent';
+        this.ctx.fill();
+        this.ctx.restore();
+
+        // Clip and draw image
         this.ctx.save();
         this.ctx.beginPath();
         this.ctx.arc(pos[0], pos[1], CONFIG.NODE_RADIUS, 0, Math.PI * 2);
@@ -652,28 +747,25 @@ class Game {
         if (image.complete && image.naturalWidth > 0) {
             this.ctx.drawImage(image, pos[0] - CONFIG.NODE_RADIUS, pos[1] - CONFIG.NODE_RADIUS, size, size);
         } else {
-            this.ctx.fillStyle = fallbackColor;
+            this.ctx.fillStyle = accentColor;
             this.ctx.fill();
         }
 
         this.ctx.restore();
 
-        // Border for player
+        // Accent border
         this.ctx.beginPath();
         this.ctx.arc(pos[0], pos[1], CONFIG.NODE_RADIUS, 0, Math.PI * 2);
-        this.ctx.lineWidth = 3;
-        this.ctx.strokeStyle = '#fff';
+        this.ctx.lineWidth = 4;
+        this.ctx.strokeStyle = accentColor;
         this.ctx.stroke();
 
-        // Add shadow/glow effect
-        this.ctx.save();
-        this.ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        this.ctx.shadowBlur = 10;
+        // White inner border
         this.ctx.beginPath();
-        this.ctx.arc(pos[0], pos[1], CONFIG.NODE_RADIUS, 0, Math.PI * 2);
-        this.ctx.strokeStyle = 'transparent';
+        this.ctx.arc(pos[0], pos[1], CONFIG.NODE_RADIUS - 3, 0, Math.PI * 2);
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
         this.ctx.stroke();
-        this.ctx.restore();
     }
 }
 

@@ -1,14 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yashoda Damodar: Nandagaon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description"
+        content="Damodarastakam - A divine chase game inspired by the story of Mother Yashoda and Lord Krishna in Nandagaon">
+    <meta name="theme-color" content="#0f0f1a">
+    <title>Damodarastakam | Divine Chase Game</title>
+
+    <!-- Preload critical assets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <!-- Preload game images -->
+    <link rel="preload" as="image" href="assets/YashodhaDamodar.jpeg">
+    <link rel="preload" as="image" href="assets/Yashoda.jpg">
+    <link rel="preload" as="image" href="assets/Krishna.jpg">
 </head>
 
 <body>
@@ -17,25 +27,25 @@
         <div id="main-menu" class="screen active">
             <h1 class="title">Damodarastakam</h1>
             <div class="menu-content">
-                <img src="assets/YashodhaDamodar.jpeg" alt="Yashoda and Krishna" class="menu-image">
+                <img src="assets/YashodhaDamodar.jpeg" alt="Mother Yashoda binding Krishna with divine love"
+                    class="menu-image">
                 <div class="description">
-                    <h2>Overview</h2>
-                    <p>A divine chase in Nandagaon. Player 1 is Mother Yashoda, Player 2 is Krishna.</p>
+                    <h2>The Divine Chase</h2>
+                    <p>A sacred game inspired by the pastimes of Nandagaon. Mother Yashoda chases her beloved Krishna
+                        through the village.</p>
                     <h2>How to Play</h2>
                     <ul>
-                        <li>Yashoda moves first.</li>
-                        <li>Players take turns moving to adjacent nodes.</li>
-                        <li>Yashoda wins if she catches Krishna (lands on the same node).</li>
-                        <li>Krishna wins if he evades capture for the duration of the game.</li>
+                        <li>Yashoda (Player 1) moves first</li>
+                        <li>Take turns moving to adjacent nodes</li>
+                        <li>Yashoda wins by catching Krishna</li>
+                        <li>Krishna wins by evading capture</li>
                     </ul>
                 </div>
                 <div class="menu-buttons">
-                    <button id="btn-easy" class="btn primary">Easy (2P)</button>
-                    <button id="btn-hard" class="btn secondary">Hard (2P)</button>
-                    <button id="btn-easy-ai" class="btn primary"
-                        style="background: linear-gradient(135deg, #ff9966, #ff5e62);">Easy (AI)</button>
-                    <button id="btn-hard-ai" class="btn secondary"
-                        style="background: linear-gradient(135deg, #4facfe, #00f2fe);">Hard (AI)</button>
+                    <button id="btn-easy" class="btn">Easy (2P)</button>
+                    <button id="btn-hard" class="btn">Hard (2P)</button>
+                    <button id="btn-easy-ai" class="btn">Easy (AI)</button>
+                    <button id="btn-hard-ai" class="btn">Hard (AI)</button>
                 </div>
             </div>
         </div>
@@ -47,7 +57,7 @@
                     <span id="turn-count">Turn: 1 / 3000</span>
                 </div>
                 <div class="player-info">
-                    <span id="current-player">Current Turn: Yashoda</span>
+                    <span id="current-player">Current: Yashoda</span>
                 </div>
             </div>
 
@@ -68,9 +78,12 @@
                 <button id="btn-play-again" class="btn primary">Play Again</button>
             </div>
         </div>
+
+        <!-- Monkey GIF - appears every 3rd move -->
+        <img id="monkey-gif" src="assets/Monkey.gif" alt="Playful Monkey" class="hidden">
     </div>
 
-    <audio id="bg-music" loop>
+    <audio id="bg-music" loop preload="auto">
         <source src="assets/Damodarastakam.mp3" type="audio/mpeg">
     </audio>
 
