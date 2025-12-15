@@ -188,6 +188,7 @@ class Game {
         this.gameState = { yashodaPos: 0, krishnaPos: 0, turnCount: 0, currentPlayer: '', gameOver: false, winner: null };
         this.isAI = false;
         this.totalMoves = 0;
+        this.monkeyAppearances = 0;
         this.animation = { active: false, player: null, fromPos: null, toPos: null, currentPos: null, startTime: null, duration: CONFIG.ANIMATION_DURATION, targetNode: null };
         this.hoveredNode = null;
         this.pulsePhase = 0;
@@ -320,6 +321,7 @@ class Game {
             turnCount: 1, currentPlayer: CONFIG.PLAYER_YASHODA, gameOver: false, winner: null
         };
         this.totalMoves = 0;
+        this.monkeyAppearances = 0;
         this.animation.active = false;
         this.trailPoints = [];
         this.hoveredNode = null;
@@ -438,8 +440,30 @@ class Game {
             setTimeout(() => this.playAITurn(), CONFIG.AI_DELAY);
     }
 
-    showMonkey() { const m = document.getElementById('monkey-gif'); if (m) { m.classList.remove('hidden'); m.classList.add('active'); } }
-    hideMonkey() { const m = document.getElementById('monkey-gif'); if (m) { m.classList.add('hidden'); m.classList.remove('active'); } }
+    showMonkey() {
+        const container = document.getElementById('monkey-container');
+        const textEl = document.getElementById('monkey-text');
+        if (container && textEl) {
+            this.monkeyAppearances++;
+            // Set different messages based on appearance count
+            if (this.monkeyAppearances === 1) {
+                textEl.textContent = "Krishna gleefully shares the stolen butter with the mischievous monkeys!";
+            } else if (this.monkeyAppearances === 2) {
+                textEl.textContent = "The monkeys have eaten their fill and refuse any more butter!";
+            } else {
+                textEl.textContent = "Krishna teases: 'Even the monkeys won't touch your butter now!'";
+            }
+            container.classList.remove('hidden');
+            container.classList.add('active');
+        }
+    }
+    hideMonkey() {
+        const container = document.getElementById('monkey-container');
+        if (container) {
+            container.classList.add('hidden');
+            container.classList.remove('active');
+        }
+    }
 
     playAITurn() {
         if (this.gameState.gameOver) return;
