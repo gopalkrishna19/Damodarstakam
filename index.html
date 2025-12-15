@@ -12,7 +12,9 @@
     <!-- Preload critical assets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 
     <!-- Preload game images -->
@@ -22,41 +24,79 @@
 </head>
 
 <body>
+    <!-- Floating particles container -->
+    <div id="particles-container" class="particles"></div>
+
+    <!-- Decorative floating diyas -->
+    <div class="floating-diyas">
+        <div class="diya diya-1">🪔</div>
+        <div class="diya diya-2">🪔</div>
+        <div class="diya diya-3">🪔</div>
+        <div class="diya diya-4">🪔</div>
+    </div>
+
+    <!-- Decorative corner ornaments -->
+    <div class="corner-ornament top-left"></div>
+    <div class="corner-ornament top-right"></div>
+    <div class="corner-ornament bottom-left"></div>
+    <div class="corner-ornament bottom-right"></div>
+
     <div id="app">
         <!-- Main Menu -->
         <div id="main-menu" class="screen active">
-            <h1 class="title">Damodarastakam</h1>
-            <div class="menu-content">
+            <div class="title-container">
+                <div class="peacock-feather left">🪶</div>
+                <h1 class="title">दामोदराष्टकम्</h1>
+                <div class="peacock-feather right">🪶</div>
+            </div>
+            <div class="menu-content glass-card">
+                <div class="lotus-border top"></div>
                 <img src="assets/YashodhaDamodar.jpeg" alt="Mother Yashoda binding Krishna with divine love"
                     class="menu-image">
                 <div class="description">
                     <h2>The Divine Chase</h2>
-                    <p>A sacred game inspired by the pastimes of Nandagaon. Mother Yashoda chases her beloved Krishna
-                        through the village.</p>
+                    <p>A sacred game inspired by the pastimes where Mother Yashoda chases her beloved Krishna.</p>
                     <h2>How to Play</h2>
                     <ul>
-                        <li>Yashoda (Player 1) moves first</li>
-                        <li>Take turns moving to adjacent nodes</li>
-                        <li>Yashoda wins by catching Krishna</li>
-                        <li>Krishna wins by evading capture</li>
+                        <li>Mother Yashoda and Krishna Take turns moving to adjacent nodes</li>
+                        <li>Yashoda wins by catching Krishna(by moving to the same node as Krishna)</li>
                     </ul>
                 </div>
                 <div class="menu-buttons">
-                    <button id="btn-easy" class="btn">Easy (2P)</button>
-                    <button id="btn-hard" class="btn">Hard (2P)</button>
-                    <button id="btn-easy-ai" class="btn">Easy (AI)</button>
-                    <button id="btn-hard-ai" class="btn">Hard (AI)</button>
+                    <button id="btn-easy" class="btn btn-divine">
+                        <span class="btn-text">Easy (2P)</span>
+                    </button>
+                    <button id="btn-hard" class="btn btn-divine">
+                        <span class="btn-text">Hard (2P)</span>
+                    </button>
+                    <button id="btn-easy-ai" class="btn btn-divine">
+                        <span class="btn-text">Easy (AI)</span>
+                    </button>
+                    <button id="btn-hard-ai" class="btn btn-divine">
+                        <span class="btn-text">Hard (AI)</span>
+                    </button>
                 </div>
+                <div class="lotus-border bottom"></div>
             </div>
         </div>
 
         <!-- Game Screen -->
         <div id="game-screen" class="screen hidden">
-            <div class="header">
+            <div class="header glass-header">
                 <div class="turn-info">
+                    <span class="info-icon">🌀</span>
                     <span id="turn-count">Turn: 1 / 3000</span>
                 </div>
+                <div class="audio-controls">
+                    <button id="btn-music" class="btn audio-btn active" title="Toggle Music">
+                        <span class="btn-icon">🎵</span>
+                    </button>
+                    <button id="btn-sound" class="btn audio-btn active" title="Toggle Sound Effects">
+                        <span class="btn-icon">🔊</span>
+                    </button>
+                </div>
                 <div class="player-info">
+                    <span class="info-icon" id="player-icon">🧡</span>
                     <span id="current-player">Current: Yashoda</span>
                 </div>
             </div>
@@ -66,16 +106,29 @@
             </div>
 
             <div class="game-controls">
-                <button id="btn-restart" class="btn small">Restart</button>
-                <button id="btn-menu" class="btn small">Menu</button>
+                <button id="btn-restart" class="btn small glass-btn">
+                    <span class="btn-icon">🔄</span>
+                    <span>Restart</span>
+                </button>
+                <button id="btn-menu" class="btn small glass-btn">
+                    <span class="btn-icon">🏠</span>
+                    <span>Menu</span>
+                </button>
             </div>
         </div>
 
         <!-- Game Over Modal -->
         <div id="game-over-modal" class="modal hidden">
-            <div class="modal-content">
+            <div class="modal-content glass-card">
+                <div id="confetti-container"></div>
                 <h2 id="winner-text">Yashoda Wins!</h2>
-                <button id="btn-play-again" class="btn primary">Play Again</button>
+                <p class="winner-subtitle" id="winner-subtitle">Divine love conquers all! 💖</p>
+                <div class="modal-buttons">
+                    <button id="btn-play-again" class="btn primary btn-divine">
+                        <span class="btn-icon">🎮</span>
+                        <span class="btn-text">Play Again</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -83,9 +136,12 @@
         <img id="monkey-gif" src="assets/Monkey.gif" alt="Playful Monkey" class="hidden">
     </div>
 
+    <!-- Background Music -->
     <audio id="bg-music" loop preload="auto">
         <source src="assets/Damodarastakam.mp3" type="audio/mpeg">
     </audio>
+
+    <!-- Sound Effects (using Web Audio API in script.js) -->
 
     <script src="script.js"></script>
 </body>
