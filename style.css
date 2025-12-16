@@ -1129,3 +1129,336 @@ canvas {
         transform: scale(0.97);
     }
 }
+
+/* ============================================
+   MOBILE LANDSCAPE MODE OPTIMIZATIONS
+   Targets mobile devices in landscape orientation
+   without affecting desktop/PC experience
+   ============================================ */
+
+/* Mobile Landscape - Main styles for any mobile device in landscape */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    /* Body adjustments for landscape */
+    body {
+        align-items: center;
+    }
+
+    /* Main Menu - Complete landscape overhaul */
+    #main-menu {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        gap: 1rem;
+        min-height: 100vh;
+        height: 100vh;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .title-container {
+        position: fixed;
+        top: 0.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
+        margin: 0;
+        background: linear-gradient(180deg, rgba(15, 15, 26, 0.95) 0%, rgba(15, 15, 26, 0) 100%);
+        padding: 0.3rem 1.5rem;
+        border-radius: 0 0 16px 16px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .peacock-feather {
+        font-size: 1.4rem;
+    }
+
+    .menu-content {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        max-width: none;
+        width: auto;
+        padding: 0.8rem 1rem;
+        gap: 1rem;
+        margin-top: 2.5rem;
+    }
+
+    .menu-image {
+        max-height: 50vh;
+        max-width: 25vw;
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .description {
+        max-width: 35vw;
+        margin-bottom: 0;
+        font-size: 0.8rem;
+        text-align: left;
+    }
+
+    .description h2 {
+        font-size: 1rem;
+        letter-spacing: 1px;
+        margin-bottom: 0.3rem;
+    }
+
+    .description p {
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .description ul li {
+        padding: 0.1rem 0 0.1rem 1.5rem;
+        line-height: 1.3;
+        font-size: 0.75rem;
+    }
+
+    .menu-buttons {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        max-width: none;
+        width: auto;
+    }
+
+    .btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+
+    .lotus-border {
+        display: none;
+    }
+
+    /* Game Screen - Landscape optimizations */
+    #game-screen {
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .glass-header {
+        padding: 0.4rem 1rem;
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .turn-info,
+    .player-info {
+        font-size: 0.9rem;
+        gap: 0.3rem;
+    }
+
+    .info-icon {
+        font-size: 1rem;
+    }
+
+    .audio-btn {
+        padding: 0.3rem 0.5rem;
+    }
+
+    .audio-btn .btn-icon {
+        font-size: 1rem;
+    }
+
+    /* Game controls - Position on left side for landscape */
+    .game-controls {
+        top: 50%;
+        left: 10px;
+        right: auto;
+        transform: translateY(-50%);
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .game-controls .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    .game-controls .btn span:not(.btn-icon) {
+        display: none;
+    }
+
+    .game-controls .btn-icon {
+        font-size: 1.2rem;
+    }
+
+    /* Monkey container - Right side for landscape */
+    #monkey-container {
+        bottom: auto;
+        left: auto;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        max-width: 180px;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    #monkey-container.active {
+        transform: translateY(-50%) translateX(0) scale(1);
+    }
+
+    #monkey-container.hidden {
+        transform: translateY(-50%) translateX(50px) scale(0.8);
+    }
+
+    .monkey-speech-bubble {
+        font-size: 0.7rem;
+        padding: 0.5rem 0.7rem;
+        max-width: 150px;
+        border-radius: 16px 16px 4px 16px;
+    }
+
+    .monkey-speech-bubble::after {
+        left: auto;
+        right: 15px;
+    }
+
+    #monkey-gif {
+        width: 100px;
+        max-height: 120px;
+    }
+
+    /* Modal adjustments for landscape */
+    .modal .glass-card {
+        padding: 1.5rem 2rem;
+        max-width: 80vw;
+    }
+
+    #winner-text {
+        font-size: 1.5rem;
+        padding: 0.8rem 1.5rem;
+    }
+
+    .winner-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Decorative elements - smaller for landscape */
+    .diya {
+        font-size: 1rem;
+    }
+
+    .floating-diyas {
+        opacity: 0.5;
+    }
+
+    .corner-ornament {
+        width: 50px;
+        height: 50px;
+        opacity: 0.15;
+    }
+}
+
+/* Extra small mobile landscape (very short height, e.g., small phones) */
+@media screen and (orientation: landscape) and (max-height: 380px) {
+    .title-container {
+        padding: 0.2rem 1rem;
+    }
+
+    .title {
+        font-size: 1.2rem;
+    }
+
+    .peacock-feather {
+        font-size: 1.1rem;
+    }
+
+    .menu-content {
+        padding: 0.5rem 0.8rem;
+        margin-top: 2rem;
+    }
+
+    .menu-image {
+        max-height: 45vh;
+        max-width: 20vw;
+    }
+
+    .description {
+        max-width: 30vw;
+        font-size: 0.7rem;
+    }
+
+    .description h2 {
+        font-size: 0.85rem;
+    }
+
+    .description p,
+    .description ul li {
+        font-size: 0.65rem;
+    }
+
+    .btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        min-height: 35px;
+    }
+
+    .glass-header {
+        padding: 0.3rem 0.8rem;
+    }
+
+    .turn-info,
+    .player-info {
+        font-size: 0.8rem;
+    }
+
+    #monkey-container {
+        max-width: 140px;
+    }
+
+    .monkey-speech-bubble {
+        font-size: 0.6rem;
+        padding: 0.4rem 0.5rem;
+        max-width: 120px;
+    }
+
+    #monkey-gif {
+        width: 80px;
+        max-height: 90px;
+    }
+
+    .modal .glass-card {
+        padding: 1rem 1.5rem;
+    }
+
+    #winner-text {
+        font-size: 1.2rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .corner-ornament {
+        display: none;
+    }
+
+    .floating-diyas {
+        display: none;
+    }
+}
+
+/* Touch-friendly adjustments specifically for mobile landscape */
+@media screen and (orientation: landscape) and (max-height: 500px) and (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 44px;
+    }
+
+    .btn:active {
+        transform: scale(0.95);
+    }
+
+    .game-controls .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .audio-btn {
+        min-height: 40px;
+        min-width: 40px;
+    }
+}
